@@ -80,6 +80,7 @@ namespace testApp
 
         private void AdjustColumnOrder()
         {
+            if (dataGridView1.Columns.Count == 0) { return; }
             dataGridView1.Columns["id"].DisplayIndex = 0;
             dataGridView1.Columns["first_name"].DisplayIndex = 1;
             dataGridView1.Columns["last_name"].DisplayIndex = 2;

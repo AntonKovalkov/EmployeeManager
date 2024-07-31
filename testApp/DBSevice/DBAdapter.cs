@@ -23,7 +23,7 @@ namespace testApp
             currentType = AdapterType.employees;
             adapter = new SqlDataAdapter(Commands.getAll, connection.getConnection());
             connection.closeConnection();
-            return AdapterHandler(adapter).Tables[currentType];
+            return AdapterHandler(adapter);
         }
 
         public DataTable GetInfoFor(string id)
@@ -33,7 +33,7 @@ namespace testApp
             adapter = new SqlDataAdapter(Commands.GetInfoFor(id), connection.getConnection());
             
             connection.closeConnection();
-            return AdapterHandler(adapter).Tables[currentType];
+            return AdapterHandler(adapter);
         }
 
         public DataTable GetDepartments()
@@ -43,7 +43,7 @@ namespace testApp
             adapter = new SqlDataAdapter(Commands.getAllDepartments, connection.getConnection());
            
             connection.closeConnection();
-            return AdapterHandler(adapter).Tables[currentType];
+            return AdapterHandler(adapter);
         }
 
         public DataTable SearchBySurname(string surname)
@@ -54,7 +54,7 @@ namespace testApp
             
             connection.closeConnection();
 
-            return AdapterHandler(adapter).Tables[currentType];
+            return AdapterHandler(adapter);
         }
 
         public void RemoveDataAt(int index)
@@ -65,7 +65,7 @@ namespace testApp
             SqlCommandBuilder builder = new SqlCommandBuilder(adapter);
             builder.GetDeleteCommand();
             //adapter = new SqlDataAdapter(Commands.employees, connection.getConnection());
-            var _ =  AdapterHandler(adapter, true).Tables[currentType];
+            var _ = AdapterHandler(adapter, true);
             connection.closeConnection();
         }
 
@@ -114,7 +114,7 @@ namespace testApp
             return null;
         }
 
-        private DataSet AdapterHandler(SqlDataAdapter adapter, bool isDelete = false)
+        private DataTable AdapterHandler(SqlDataAdapter adapter, bool isDelete = false)
         {
             try
             {
@@ -126,10 +126,14 @@ namespace testApp
                 {
                     dataSet = new DataSet();
                     adapter.Fill(dataSet, currentType);
+                } 
+                if (dataSet.Tables.Count == 0)
+                {
+                    return null;
+                } else
+                {
+                    return dataSet.Tables[currentType];
                 }
-                
-                
-                return dataSet;
             }
             catch(Exception ex)
             {
