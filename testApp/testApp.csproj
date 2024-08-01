@@ -65,7 +65,7 @@
     <Compile Include="DBSevice\DBAdapter.cs" />
     <Compile Include="DBSevice\DBConnection.cs" />
     <Compile Include="DBSevice\DBCreator.cs" />
-    <Compile Include="DBSevice\AdapterModel.cs" />
+    <Compile Include="DBSevice\EmployeeEditModel.cs" />
     <Compile Include="DBSevice\SQLCommands.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

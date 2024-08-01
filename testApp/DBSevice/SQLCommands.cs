@@ -22,9 +22,11 @@ namespace testApp.DBSevice
 
         internal struct GetData
         {
+            public static string getEmployees = "SELECT * FROM Employees";
+            public static string getDepartaments = "SELECT * FROM Departments";
+            public static string getPositions = "SELECT * FROM Positions";
             public static string getAll = "SELECT Employees.id, Employees.first_name, Employees.last_name, Employees.email, Employees.birthday, Departments.name, Positions.name, 'Delete' AS [Delete] FROM Employees\r\nJOIN Departments ON Departments.id = department_id\r\nJOIN Positions ON Positions.id = position_id";
-            public static string getAllDepartments = "SELECT Departments.name, Positions.name FROM Departments\r\nJOIN Positions ON Positions.department_id = Departments.id";
-            public static string employees = "SELECT * FROM Employees";
+            public static string getDepartmentsWithPositions = "SELECT Departments.name, Positions.name FROM Departments\r\nJOIN Positions ON Positions.department_id = Departments.id";
 
             public static String GetInfoFor(string id)
             {

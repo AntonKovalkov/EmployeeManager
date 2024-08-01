@@ -12,75 +12,96 @@ namespace testApp
     internal class DBAdapter
     {
         private DBConnection connection = new DBConnection();
-        private DataSet dataSet = null;
+        private DataSet dataSet = new DataSet();
         private SqlDataAdapter adapter = null;
-        private String currentType = "";
+
+        public DBAdapter()
+        {
+            getDepartments();
+            getEmployees();
+            getPositions();
+        }
+
+        private void getEmployees()
+        {
+            connection.openConnection();
+            adapter = new SqlDataAdapter(SQLCommands.GetData.getEmployees, connection.getConnection());
+            connection.closeConnection();
+            var _ =  AdapterHandler(adapter, AdapterType.employees);
+        }
+
+        private void getDepartments()
+        {
+            connection.openConnection();
+            adapter = new SqlDataAdapter(SQLCommands.GetData.getDepartaments, connection.getConnection());
+            connection.closeConnection();
+            var _ = AdapterHandler(adapter, AdapterType.departments);
+        }
+
+        private void getPositions()
+        {
+            connection.openConnection();
+            adapter = new SqlDataAdapter(SQLCommands.GetData.getPositions, connection.getConnection());
+            connection.closeConnection();
+            var _ = AdapterHandler(adapter, AdapterType.positions);
+        }
 
         public DataTable GetAll()
         {
             connection.openConnection();
-            currentType = AdapterType.employees;
             adapter = new SqlDataAdapter(SQLCommands.GetData.getAll, connection.getConnection());
             connection.closeConnection();
-            return AdapterHandler(adapter);
+            return AdapterHandler(adapter, AdapterType.joinedEmployees);
         }
 
         public DataTable GetInfoFor(string id)
         {
             connection.openConnection();
-            currentType = AdapterType.employeeWithId;
             adapter = new SqlDataAdapter(SQLCommands.GetData.GetInfoFor(id), connection.getConnection());
-            
             connection.closeConnection();
-            return AdapterHandler(adapter);
+            return AdapterHandler(adapter, AdapterType.joinedEmployeeWithId);
         }
 
         public DataTable GetDepartments()
         {
             connection.openConnection();
-            currentType = AdapterType.departments;
-            adapter = new SqlDataAdapter(SQLCommands.GetData.getAllDepartments, connection.getConnection());
-           
+            adapter = new SqlDataAdapter(SQLCommands.GetData.getDepartmentsWithPositions, connection.getConnection());
             connection.closeConnection();
-            return AdapterHandler(adapter);
+            return AdapterHandler(adapter, AdapterType.joinedDepartments);
         }
 
         public DataTable SearchBySurname(string surname)
         {
             connection.openConnection();
-            currentType = AdapterType.procedure;
             adapter = new SqlDataAdapter(SQLCommands.GetData.ProcedureCommand(surname), connection.getConnection());
-            
             connection.closeConnection();
-
-            return AdapterHandler(adapter);
+            return AdapterHandler(adapter, AdapterType.procedure);
         }
 
         public void RemoveDataAt(int index)
         {
             //connection.openConnection();
-            Console.WriteLine(dataSet.Tables[currentType].Rows[index].ItemArray[0]);
-            dataSet.Tables[currentType].Rows[index].Delete();
+            Console.WriteLine(dataSet.Tables[AdapterType.employees].Rows[index].ItemArray[0]);
+            dataSet.Tables[AdapterType.employees].Rows[index].Delete();
             SqlCommandBuilder builder = new SqlCommandBuilder(adapter);
             builder.GetDeleteCommand();
-            //adapter = new SqlDataAdapter(Commands.employees, connection.getConnection());
-            var _ = AdapterHandler(adapter, true);
+            var _ = AdapterHandler(adapter, AdapterType.employees, true);
             connection.closeConnection();
         }
 
         public String GetInfoForDelete(int index)
         {
             connection.openConnection();
-            adapter = new SqlDataAdapter(SQLCommands.GetData.employees, connection.getConnection());
-            var _ = AdapterHandler(adapter);
-            //connection.closeConnection();
+            string type = AdapterType.joinedEmployees;
+            adapter = new SqlDataAdapter(SQLCommands.GetData.getEmployees, connection.getConnection());
+            var _ = AdapterHandler(adapter, type);
             if (dataSet.Tables.Count > 0)
             {
-                DataTable table = dataSet.Tables[currentType];
+                DataTable table = dataSet.Tables[type];
                 if (table.Rows.Count > index)
                 {
                     object[] items = table.Rows[index].ItemArray;
-                    if (currentType != AdapterType.departments)
+                    if (type != AdapterType.joinedDepartments)
                     {
                         return $"{items[1]} {items[2]}";
                     }
@@ -89,23 +110,49 @@ namespace testApp
             return "";
         }
 
-        public AdapterModel? GetEmployee(int index)
+        public EmployeeEditModel? GetEmployee(int index)
         {
             if (dataSet.Tables.Count > 0)
             {
-                DataTable table = dataSet.Tables[currentType];
-                if (table.Rows.Count > index)
+                DataTable emloyeeTable = dataSet.Tables[AdapterType.employees];
+                DataTable departamentsTable = dataSet.Tables[AdapterType.departments];
+                DataTable positionsTable = dataSet.Tables[AdapterType.positions];
+                if (emloyeeTable.Rows.Count > index)
                 {
-                    object[] items = table.Rows[index].ItemArray;
-                    if (currentType != AdapterType.departments)
+                    object[] employeeItems = emloyeeTable.Rows[index].ItemArray;
+                    Dictionary<int, string> departamentsItems = new Dictionary<int, string>();
+                    foreach (DataRow dep in departamentsTable.Rows) {
+                        string idRecord = dep.ItemArray[0].ToString();
+                        string nameRecord = dep.ItemArray[1].ToString();
+                        int id = 0;
+                        int.TryParse(idRecord, out id);
+                        departamentsItems[id] = nameRecord;
+                    }
+                    Dictionary<int, string[]> positionItems = new Dictionary<int, string[]>();
+                    foreach(DataRow pos in positionsTable.Rows)
                     {
-                        return new AdapterModel(
-                            items[1].ToString(), 
-                            items[2].ToString(), 
-                            items[3].ToString(), 
-                            items[4].ToString(), 
-                            items[5].ToString(), 
-                            items[6].ToString()
+                        string idRecord = pos.ItemArray[0].ToString();
+                        string[] dataRecord = { pos.ItemArray[1].ToString(), pos.ItemArray[2].ToString() };
+                        int id = 0;
+                        int.TryParse(idRecord, out id);
+                        positionItems[id] = dataRecord;
+                    }
+
+                    if (employeeItems.Length >= 7)
+                    {
+                        int departamentId = 0;
+                        int.TryParse(employeeItems[5].ToString(), out departamentId);
+                        int positionId = 0;
+                        int.TryParse(employeeItems[6].ToString(), out positionId);
+                        return new EmployeeEditModel(
+                            employeeItems[1].ToString(), 
+                            employeeItems[2].ToString(), 
+                            employeeItems[3].ToString(), 
+                            employeeItems[4].ToString(), 
+                            departamentId, 
+                            positionId,
+                            departamentsItems,
+                            positionItems
                             );
                     }
                 }
@@ -113,25 +160,24 @@ namespace testApp
             return null;
         }
 
-        private DataTable AdapterHandler(SqlDataAdapter adapter, bool isDelete = false)
+        private DataTable AdapterHandler(SqlDataAdapter adapter, string type, bool isDelete = false)
         {
             try
             {
                 if (isDelete)
                 {
-                    var test = adapter.Update(dataSet, currentType);
-                    Console.WriteLine(test);
+                    var _ = adapter.Update(dataSet, type);
                 } else
                 {
-                    dataSet = new DataSet();
-                    adapter.Fill(dataSet, currentType);
+                    dataSet.Tables[type]?.Clear();
+                    adapter.Fill(dataSet, type);
                 } 
                 if (dataSet.Tables.Count == 0)
                 {
                     return null;
                 } else
                 {
-                    return dataSet.Tables[currentType];
+                    return dataSet.Tables[type];
                 }
             }
             catch(Exception ex)

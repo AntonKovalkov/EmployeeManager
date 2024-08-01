@@ -12,7 +12,7 @@ namespace testApp
 {
     public partial class Form2 : Form
     {
-        public AdapterModel employee;
+        public EmployeeEditModel employee;
 
         
 
@@ -33,8 +33,8 @@ namespace testApp
             lastNameTextBox.Text = employee.lastName;
             emailTextBox.Text = employee.email;
             birthdayDateTimePicker.Text = employee.birthday;
-            departmentComboBox.Text = employee.department;
-            positionComboBox.Text = employee.position;
+            departmentComboBox.Text = employee.departamentId.ToString();
+            positionComboBox.Text = employee.positionId.ToString();
         }
 
         private void birthdayDateTimePicker_ValueChanged(object sender, EventArgs e)

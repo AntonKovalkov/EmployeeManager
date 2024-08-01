@@ -124,7 +124,7 @@ namespace testApp
         {
             if (SelectedItem.HasValue)
             {
-                AdapterModel? emloyee = adapter.GetEmployee(SelectedItem.Value);
+                EmployeeEditModel? emloyee = adapter.GetEmployee(SelectedItem.Value);
                 if (emloyee.HasValue)
                 {
                     Form2 form = new Form2();
