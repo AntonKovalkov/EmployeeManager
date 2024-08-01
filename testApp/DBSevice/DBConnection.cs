@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.SqlClient;
+using System.Data.SqlClient; 
 
 namespace testApp
 {
     internal class DBConnection
     {
-        private SqlConnection sqlConnection = new SqlConnection(@"Data Source=WIN-BARIR7I7O79;Initial Catalog=EmployeeManagment; Integrated Security=True");
+        private SqlConnection sqlConnection = new SqlConnection(@"Data Source=localhost;Initial Catalog=MyDatabase; Integrated Security=True");
 
         public void openConnection()
         {

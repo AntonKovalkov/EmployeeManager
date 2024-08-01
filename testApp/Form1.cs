@@ -39,6 +39,8 @@ namespace testApp
             adapter = new DBAdapter();
             delete_button.Enabled = false;
             change_button.Enabled = false;
+            DBCreator creator = new DBCreator();
+            creator.CreateDB();
         }
 
         private void get_all_Click(object sender, EventArgs e)
@@ -124,7 +126,7 @@ namespace testApp
         {
             if (SelectedItem.HasValue)
             {
-                EmployeeModel? emloyee = adapter.GetEmployee(SelectedItem.Value);
+                AdapterModel? emloyee = adapter.GetEmployee(SelectedItem.Value);
                 if (emloyee.HasValue)
                 {
                     Form2 form = new Form2();

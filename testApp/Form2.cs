@@ -12,7 +12,7 @@ namespace testApp
 {
     public partial class Form2 : Form
     {
-        public EmployeeModel employee;
+        public AdapterModel employee;
 
         
 

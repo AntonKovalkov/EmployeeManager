@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace testApp
 {
-    public struct EmployeeModel
+    public struct AdapterType
+    {
+        public static String employees = "Employees";
+        public static String employeeWithId = "Employee";
+        public static String departments = "Departments";
+        public static String procedure = "Procedure";
+    }
+
+    public struct AdapterModel
     {
         public string name;
         public string lastName;
@@ -15,7 +23,7 @@ namespace testApp
         public string department;
         public string position;
 
-        public EmployeeModel(string name, string lastName, string email, string birthday, string department, string position)
+        public AdapterModel(string name, string lastName, string email, string birthday, string department, string position)
         {
             this.name = name;
             this.lastName = lastName;
