@@ -9,7 +9,7 @@ namespace testApp
 {
     internal class DBConnection
     {
-        private SqlConnection sqlConnection = new SqlConnection(@"Data Source=localhost;Initial Catalog=MyDatabase; Integrated Security=True");
+        private SqlConnection sqlConnection = new SqlConnection(@"Data Source=localhost;Initial Catalog=EmployeeManagement; Integrated Security=True");
 
         public void openConnection()
         {

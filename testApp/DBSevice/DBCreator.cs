@@ -7,21 +7,23 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Configuration;
-using testApp.DBSevice;
 
-namespace testApp
+namespace testApp.DBSevice
 {
     internal class DBCreator
     {
         private string connectioPath = "";
+        private DBConnection dbConnection = new DBConnection();
+        private SqlDataAdapter adapter = null;
+
         public void CreateDB()
         {
-            SqlConnection connection = new SqlConnection("Server=localhost;Integrated security=SSPI;database=master");
+            SqlConnection createConnection = new SqlConnection("Server=localhost;Integrated security=SSPI;database=master");
             string str = SQLCommands.CreateData.createDatabase;
-            SqlCommand myCommand = new SqlCommand(str, connection);
+            SqlCommand myCommand = new SqlCommand(str, createConnection);
             try
             {
-                connection.Open();
+                createConnection.Open();
                 myCommand.ExecuteNonQuery();
             }
             catch (System.Exception ex)
@@ -30,10 +32,61 @@ namespace testApp
             }
             finally
             {
-                if (connection.State == ConnectionState.Open)
+                if (createConnection.State == ConnectionState.Open)
                 {
-                    connection.Close();
+                    createConnection.Close();
+                    CreateTables();
                 }
+            }
+        }
+
+        private void CreateTables()
+        {
+            string command = 
+                SQLCommands.CreateData.createDepartments +
+                SQLCommands.CreateData.createPositions +
+                SQLCommands.CreateData.createEmployees;
+            
+           
+            SqlCommand myCommand = new SqlCommand(command, dbConnection.getConnection());
+            try
+            {
+                dbConnection.openConnection();
+                myCommand.ExecuteNonQuery();
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "MyProgram", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            finally
+            {
+                CreateData();
+            }
+        }
+
+        private void CreateData()
+        {
+            string command =
+               SQLCommands.CreateData.generatDepartments +
+               SQLCommands.CreateData.generatePositions +
+               SQLCommands.CreateData.generateEmployyes;
+
+
+            SqlCommand myCommand = new SqlCommand(command, dbConnection.getConnection());
+            try
+            {
+                dbConnection.openConnection();
+                myCommand.ExecuteNonQuery();
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "MyProgram", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            finally
+            {
+                dbConnection.closeConnection();
+                Properties.Settings.Default.isFirstRun = false;
+                Properties.Settings.Default.Save();
             }
         }
     }

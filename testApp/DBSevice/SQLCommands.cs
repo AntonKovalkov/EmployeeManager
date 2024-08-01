@@ -10,7 +10,7 @@ namespace testApp.DBSevice
     {
         internal struct CreateData
         {
-            public static string createDatabase = "If(db_id(N'MyDatabase') IS NULL) CREATE DATABASE [MyDatabase]";
+            public static string createDatabase = "If(db_id(N'EmployeeManagement') IS NULL) CREATE DATABASE [EmployeeManagement]";
             public static string createDepartments = "CREATE TABLE Departments (\r\n\tid INT PRIMARY KEY IDENTITY,\r\n\tname NVARCHAR(50) NOT NULL UNIQUE\r\n);";
             public static string createPositions = "CREATE TABLE Positions (\r\n\tid INT PRIMARY KEY IDENTITY,\r\n\tname NVARCHAR(50) NOT NULL,\r\n\tdepartment_id INT REFERENCES Departments(id) ON DELETE CASCADE\r\n);";
             public static string createEmployees = "CREATE TABLE Employees (\r\n\tid INT PRIMARY KEY IDENTITY,\r\n\tfirst_name NVARCHAR(50) NOT NULL,\r\n\tlast_name NVARCHAR(50) NOT NULL,\r\n\temail NVARCHAR(100) NOT NULL UNIQUE,\r\n\tbirthday DATE NOT NULL,\r\n\tdepartment_id INT REFERENCES Departments(id) ON DELETE CASCADE,\r\n\tposition_id INT REFERENCES Positions(id)\r\n);";
