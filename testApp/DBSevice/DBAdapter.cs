@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Data;
 using testApp.DBSevice;
+using System.Reflection;
 
 namespace testApp
 {
-    internal class DBAdapter
+    public class DBAdapter
     {
         private DBConnection connection = new DBConnection();
         private DataSet dataSet = new DataSet();
@@ -56,6 +57,16 @@ namespace testApp
 
         public DataTable GetInfoFor(string id)
         {
+            connection.openConnection();
+            adapter = new SqlDataAdapter(SQLCommands.GetData.GetInfoFor(id), connection.getConnection());
+            connection.closeConnection();
+            return AdapterHandler(adapter, AdapterType.joinedEmployeeWithId);
+        }
+
+        public DataTable GetInfoFor(int index)
+        {
+            DataTable employeeTable = dataSet.Tables[AdapterType.employees];
+            string id = employeeTable.Rows[index].ItemArray[0].ToString();
             connection.openConnection();
             adapter = new SqlDataAdapter(SQLCommands.GetData.GetInfoFor(id), connection.getConnection());
             connection.closeConnection();
@@ -110,54 +121,31 @@ namespace testApp
             return "";
         }
 
-        public EmployeeEditModel? GetEmployee(int index)
+        public DataTable GetDepartmentsTable()
         {
-            if (dataSet.Tables.Count > 0)
-            {
-                DataTable emloyeeTable = dataSet.Tables[AdapterType.employees];
-                DataTable departamentsTable = dataSet.Tables[AdapterType.departments];
-                DataTable positionsTable = dataSet.Tables[AdapterType.positions];
-                if (emloyeeTable.Rows.Count > index)
-                {
-                    object[] employeeItems = emloyeeTable.Rows[index].ItemArray;
-                    Dictionary<int, string> departamentsItems = new Dictionary<int, string>();
-                    foreach (DataRow dep in departamentsTable.Rows) {
-                        string idRecord = dep.ItemArray[0].ToString();
-                        string nameRecord = dep.ItemArray[1].ToString();
-                        int id = 0;
-                        int.TryParse(idRecord, out id);
-                        departamentsItems[id] = nameRecord;
-                    }
-                    Dictionary<int, string[]> positionItems = new Dictionary<int, string[]>();
-                    foreach(DataRow pos in positionsTable.Rows)
-                    {
-                        string idRecord = pos.ItemArray[0].ToString();
-                        string[] dataRecord = { pos.ItemArray[1].ToString(), pos.ItemArray[2].ToString() };
-                        int id = 0;
-                        int.TryParse(idRecord, out id);
-                        positionItems[id] = dataRecord;
-                    }
+            return dataSet.Tables[AdapterType.departments];
+        }
 
-                    if (employeeItems.Length >= 7)
-                    {
-                        int departamentId = 0;
-                        int.TryParse(employeeItems[5].ToString(), out departamentId);
-                        int positionId = 0;
-                        int.TryParse(employeeItems[6].ToString(), out positionId);
-                        return new EmployeeEditModel(
-                            employeeItems[1].ToString(), 
-                            employeeItems[2].ToString(), 
-                            employeeItems[3].ToString(), 
-                            employeeItems[4].ToString(), 
-                            departamentId, 
-                            positionId,
-                            departamentsItems,
-                            positionItems
-                            );
-                    }
-                }
-            }
-            return null;
+        public DataTable GetPositionsTable()
+        {
+            return dataSet.Tables[AdapterType.positions];
+        }
+
+        public void UpdateEmployee(EmployeeEditModel model, string depId, string posId, int currentIndex) 
+        {
+            dataSet.Tables[AdapterType.employees].Rows[currentIndex]["first_name"] = model.name;
+            dataSet.Tables[AdapterType.employees].Rows[currentIndex]["last_name"] = model.lastName;
+            dataSet.Tables[AdapterType.employees].Rows[currentIndex]["email"] = model.email;
+            dataSet.Tables[AdapterType.employees].Rows[currentIndex]["birthday"] = model.birthday;
+            dataSet.Tables[AdapterType.employees].Rows[currentIndex]["department_id"] = depId;
+            dataSet.Tables[AdapterType.employees].Rows[currentIndex]["position_id"] = posId;
+
+            connection.openConnection();
+            adapter = new SqlDataAdapter(SQLCommands.GetData.getEmployees, connection.getConnection());
+            SqlCommandBuilder builder = new SqlCommandBuilder(adapter);
+            builder.GetUpdateCommand();
+            var _ = AdapterHandler(adapter, AdapterType.employees, true);
+            connection.closeConnection();
         }
 
         private DataTable AdapterHandler(SqlDataAdapter adapter, string type, bool isDelete = false)

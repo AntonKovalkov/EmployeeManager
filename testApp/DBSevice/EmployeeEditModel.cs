@@ -23,28 +23,30 @@ namespace testApp
         public string lastName;
         public string email;
         public string birthday;
-        public int departamentId;
-        public int positionId;
-        public Dictionary<int, string> departments;
-        public Dictionary<int, string []> positions;
+        public string departmentName;
+        public string positionName;
 
         public EmployeeEditModel(string name, 
             string lastName, 
             string email, 
             string birthday,
-            int departamentId,
-            int positionId,
-            Dictionary<int, string> departments, 
-            Dictionary<int, string []> positions)
+            string departmentName,
+            string positionName)
         {
             this.name = name;
             this.lastName = lastName;
             this.email = email;
             this.birthday = birthday;
-            this.departamentId = departamentId;
-            this.positionId = positionId;
-            this.departments = departments;
-            this.positions = positions;
+            this.departmentName = departmentName;
+            this.positionName = positionName;
         }
+    }
+}
+
+public static class StringExtension
+{
+    public static bool IsEmpty(this string str)
+    {
+        return (str == "") || (str == null);
     }
 }

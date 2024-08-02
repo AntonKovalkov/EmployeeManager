@@ -1,6 +1,6 @@
 ﻿namespace testApp
 {
-    partial class Form2
+    partial class EditForm
     {
         /// <summary>
         /// Required designer variable.
@@ -133,6 +133,7 @@
             this.departmentComboBox.Name = "departmentComboBox";
             this.departmentComboBox.Size = new System.Drawing.Size(110, 21);
             this.departmentComboBox.TabIndex = 10;
+            this.departmentComboBox.SelectedIndexChanged += new System.EventHandler(this.departmentComboBox_SelectedIndexChanged);
             // 
             // positionComboBox
             // 
@@ -141,6 +142,7 @@
             this.positionComboBox.Name = "positionComboBox";
             this.positionComboBox.Size = new System.Drawing.Size(110, 21);
             this.positionComboBox.TabIndex = 11;
+            this.positionComboBox.SelectedIndexChanged += new System.EventHandler(this.positionComboBox_SelectedIndexChanged);
             // 
             // save_button
             // 
@@ -152,7 +154,7 @@
             this.save_button.UseVisualStyleBackColor = true;
             this.save_button.Click += new System.EventHandler(this.save_button_Click);
             // 
-            // Form2
+            // EditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -170,7 +172,7 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Name = "Form2";
+            this.Name = "EditForm";
             this.Text = "Edit";
             this.Load += new System.EventHandler(this.Form2_Load);
             this.ResumeLayout(false);

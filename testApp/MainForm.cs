@@ -11,7 +11,7 @@ using System.Data.SqlClient;
 
 namespace testApp
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
 
         private DBAdapter adapter = null;
@@ -29,7 +29,7 @@ namespace testApp
             }
         }
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
         }
@@ -124,13 +124,10 @@ namespace testApp
         {
             if (SelectedItem.HasValue)
             {
-                EmployeeEditModel? emloyee = adapter.GetEmployee(SelectedItem.Value);
-                if (emloyee.HasValue)
-                {
-                    Form2 form = new Form2();
-                    form.employee = emloyee.Value;
-                    form.ShowDialog();
-                }
+                EditForm form = new EditForm();
+                form.adapter = adapter;
+                form.selectedItem = SelectedItem.Value;
+                form.ShowDialog();
             }
             
         }
