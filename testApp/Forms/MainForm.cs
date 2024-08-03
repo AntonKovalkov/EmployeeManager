@@ -76,7 +76,7 @@ namespace testApp
             if (id == null || id == "") { return; }
             dataGridView1.DataSource = adapter.GetInfoFor(id);
             AdjustColumnOrder();
-            TableType = testApp.TableType.employees;
+            TableType = testApp.TableType.others;
             SelectedItem = null;
         }
 
@@ -84,7 +84,7 @@ namespace testApp
         private void get_all_departaments_Click(object sender, EventArgs e)
         {
             dataGridView1.DataSource = adapter.GetDepartments();
-            TableType = testApp.TableType.departments;
+            TableType = testApp.TableType.others;
             SelectedItem = null;
         }
 
@@ -94,7 +94,7 @@ namespace testApp
             String last_name = last_name_text.Text;
             dataGridView1.DataSource = adapter.SearchBySurname(last_name);
             AdjustColumnOrder();
-            TableType = testApp.TableType.employees;
+            TableType = testApp.TableType.others;
             SelectedItem = null;
         }
 
@@ -160,7 +160,6 @@ namespace testApp
                 isFirstRun = false;
             } else
             {
-                SelectedItem = null;
                 LoadData();
             }
         }
@@ -169,6 +168,6 @@ namespace testApp
     enum TableType
     {
         employees, 
-        departments
+        others
     }
 }

@@ -10,10 +10,10 @@ using System.Configuration;
 
 namespace testApp.DBSevice
 {
+    //Create DB, Tables and Mock data
     internal class DBCreator
     {
         private DBConnection dbConnection = new DBConnection();
-        private SqlDataAdapter adapter = null;
 
         public void CreateDB()
         {

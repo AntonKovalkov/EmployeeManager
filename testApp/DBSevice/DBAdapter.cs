@@ -16,6 +16,7 @@ namespace testApp
         private DataSet dataSet = new DataSet();
         private SqlDataAdapter adapter = null;
 
+        //Get initital data
         public DBAdapter()
         {
             getDepartments();
@@ -23,6 +24,7 @@ namespace testApp
             getPositions();
         }
 
+        //Employees table
         private void getEmployees()
         {
             connection.openConnection();
@@ -31,6 +33,7 @@ namespace testApp
             var _ =  AdapterHandler(adapter, AdapterType.employees);
         }
 
+        //Departaments table
         private void getDepartments()
         {
             connection.openConnection();
@@ -39,6 +42,7 @@ namespace testApp
             var _ = AdapterHandler(adapter, AdapterType.departments);
         }
 
+        //Positions table
         private void getPositions()
         {
             connection.openConnection();
@@ -47,6 +51,7 @@ namespace testApp
             var _ = AdapterHandler(adapter, AdapterType.positions);
         }
 
+        //Get joined employees table
         public DataTable GetAll()
         {
             connection.openConnection();
@@ -55,6 +60,7 @@ namespace testApp
             return AdapterHandler(adapter, AdapterType.joinedEmployees);
         }
 
+        //Finde employee by id
         public DataTable GetInfoFor(string id)
         {
             connection.openConnection();
@@ -63,6 +69,7 @@ namespace testApp
             return AdapterHandler(adapter, AdapterType.joinedEmployeeWithId);
         }
 
+        //Finde employee from DataSet by selected index
         public DataTable GetInfoFor(int index)
         {
             DataTable employeeTable = dataSet.Tables[AdapterType.employees];
@@ -73,6 +80,7 @@ namespace testApp
             return AdapterHandler(adapter, AdapterType.joinedEmployeeWithId);
         }
 
+        //Get joined departments table
         public DataTable GetDepartments()
         {
             connection.openConnection();
@@ -81,6 +89,7 @@ namespace testApp
             return AdapterHandler(adapter, AdapterType.joinedDepartments);
         }
 
+        //Exec store procedure
         public DataTable SearchBySurname(string surname)
         {
             connection.openConnection();
@@ -89,6 +98,7 @@ namespace testApp
             return AdapterHandler(adapter, AdapterType.procedure);
         }
 
+        //Remove employee
         public void RemoveDataAt(int index)
         {
             connection.openConnection();
@@ -101,6 +111,7 @@ namespace testApp
             connection.closeConnection();
         }
 
+        //Get employee name and surname bedore remove
         public String GetInfoForDelete(int index)
         {
             if (dataSet.Tables.Count > 0)
@@ -115,16 +126,19 @@ namespace testApp
             return "";
         }
 
+        //Stored departments table
         public DataTable GetDepartmentsTable()
         {
             return dataSet.Tables[AdapterType.departments];
         }
 
+        //Stored positions table
         public DataTable GetPositionsTable()
         {
             return dataSet.Tables[AdapterType.positions];
         }
 
+        //Update employee data
         public void UpdateEmployee(EmployeeEditModel model, string depId, string posId, int currentIndex) 
         {
             dataSet.Tables[AdapterType.employees].Rows[currentIndex]["first_name"] = model.name;
@@ -142,6 +156,7 @@ namespace testApp
             connection.closeConnection();
         }
 
+        //Checking the SQladapter for exceptions
         private DataTable AdapterHandler(SqlDataAdapter adapter, string type, bool isDelete = false)
         {
             try

@@ -70,7 +70,6 @@ namespace testApp
 
         private void ConfigViews()
         {
-            Console.WriteLine("Config!!!");
             nameTextBox.Text = employee.name;
             lastNameTextBox.Text = employee.lastName;
             emailTextBox.Text = employee.email;
