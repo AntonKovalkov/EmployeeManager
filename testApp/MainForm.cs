@@ -16,7 +16,20 @@ namespace testApp
 
         private DBAdapter adapter = null;
         private int? _selectedItem = null;
-        private TableType? tableType = null;
+        private TableType? _tableType = null;
+        private bool isFirstRun = true;
+
+        private TableType? TableType
+        {
+            get => _tableType;
+            set
+            {
+                _tableType = value;
+                bool condition = (value == testApp.TableType.employees) && (SelectedItem != null);
+                delete_button.Enabled = condition;
+                change_button.Enabled = condition;
+            }
+        }
 
         private int? SelectedItem
         {
@@ -24,8 +37,9 @@ namespace testApp
             set
             {
                 _selectedItem = value;
-                delete_button.Enabled = !(value == null);
-                change_button.Enabled = !(value == null);
+                bool condition = (TableType == testApp.TableType.employees) && (value != null);
+                delete_button.Enabled = condition;
+                change_button.Enabled = condition;
             }
         }
 
@@ -41,43 +55,50 @@ namespace testApp
             change_button.Enabled = false;
         }
 
+        //Load all employees
         private void get_all_Click(object sender, EventArgs e)
-        {   
-            dataGridView1.DataSource = adapter.GetAll();
-
-            for (int i = 0; i < dataGridView1.Rows.Count; i++)
-            {
-                DataGridViewLinkCell linkCell = new DataGridViewLinkCell();
-                dataGridView1[7, i] = linkCell;
-            }
-            AdjustColumnOrder();
-            tableType = TableType.employees;
+        {
+            LoadData();
+            SelectedItem = null;
         }
 
+        private void LoadData()
+        {
+            dataGridView1.DataSource = adapter.GetAll();
+            AdjustColumnOrder();
+            TableType = testApp.TableType.employees;
+        }
+
+        //Get employee sith id
         private void get_info_Click(object sender, EventArgs e)
         {
             String id = employee_id_text.Text;
             if (id == null || id == "") { return; }
             dataGridView1.DataSource = adapter.GetInfoFor(id);
             AdjustColumnOrder();
-            tableType = TableType.employees;
+            TableType = testApp.TableType.employees;
+            SelectedItem = null;
         }
 
+        //Get all departaments
         private void get_all_departaments_Click(object sender, EventArgs e)
         {
             dataGridView1.DataSource = adapter.GetDepartments();
-            tableType = TableType.departments;
+            TableType = testApp.TableType.departments;
+            SelectedItem = null;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        //Get employee from procedure
+        private void finde_employee_Click(object sender, EventArgs e)
         {
             String last_name = last_name_text.Text;
             dataGridView1.DataSource = adapter.SearchBySurname(last_name);
             AdjustColumnOrder();
-            tableType = TableType.employees;
+            TableType = testApp.TableType.employees;
+            SelectedItem = null;
         }
 
-
+        //DataGrid configuration
         private void AdjustColumnOrder()
         {
             if (dataGridView1.Columns.Count == 0) { return; }
@@ -101,8 +122,6 @@ namespace testApp
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             SelectedItem = e.RowIndex;
-
-            //MessageBox.Show($"Row index =  {e.RowIndex}", "Test", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void delete_button_Click(object sender, EventArgs e)
@@ -115,11 +134,13 @@ namespace testApp
                 {
                     adapter.RemoveDataAt(SelectedItem.Value);
                     dataGridView1.Rows.RemoveAt(SelectedItem.Value);
+                    SelectedItem = null;
                 }
             }
             
         }
 
+        //Edit secletd employee
         private void change_button_Click(object sender, EventArgs e)
         {
             if (SelectedItem.HasValue)
@@ -129,7 +150,19 @@ namespace testApp
                 form.selectedItem = SelectedItem.Value;
                 form.ShowDialog();
             }
-            
+        }
+
+        //Reload data when form is activated
+        private void MainForm_Activated(object sender, EventArgs e)
+        {
+            if (isFirstRun)
+            {
+                isFirstRun = false;
+            } else
+            {
+                SelectedItem = null;
+                LoadData();
+            }
         }
     }
 

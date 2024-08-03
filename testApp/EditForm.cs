@@ -78,7 +78,6 @@ namespace testApp
 
             ConfigDepComboBox();
             ConfigPosComboBox();
-           
         }
 
         private void ConfigDepComboBox()
@@ -86,8 +85,16 @@ namespace testApp
             List<string> departments = new List<string>();
             foreach (DataRow dep in departmentsTable.Rows)
             {
-                if (dep.ItemArray[1].ToString() == employee.departmentName) currentDepId = dep.ItemArray[0].ToString();
-                departments.Add(dep.ItemArray[1].ToString());
+                string element = dep.ItemArray[1].ToString();
+                if (element == employee.departmentName)
+                {
+                    currentDepId = dep.ItemArray[0].ToString();
+                    departments.Insert(0, element);
+                } else
+                {
+                    departments.Add(element);
+                }
+                
             }
             departmentComboBox.DataSource = departments;
         }
@@ -98,8 +105,18 @@ namespace testApp
             
             foreach (DataRow pos in positionsTable.Rows)
             {
-                if (pos.ItemArray[1].ToString() == employee.positionName) currentPosId = pos.ItemArray[0].ToString();
-                if (pos.ItemArray[2].ToString() == currentDepId) positions.Add(pos.ItemArray[1].ToString());
+                string element = pos.ItemArray[1].ToString();
+                if (pos.ItemArray[2].ToString() == currentDepId)
+                {
+                    if (element == employee.positionName)
+                    {
+                        currentPosId = pos.ItemArray[0].ToString();
+                        positions.Insert(0, element);
+                    } else
+                    {
+                        positions.Add(element);
+                    }
+                }
             }
             positionComboBox.DataSource = positions;
         }
@@ -136,7 +153,7 @@ namespace testApp
                 if (dep.ItemArray[1].ToString() == employee.departmentName)
                 {
                     currentDepId = dep.ItemArray[0].ToString();
-                    return;
+                    break;
                 }
                 
             }
@@ -146,7 +163,7 @@ namespace testApp
                 if (pos.ItemArray[1].ToString() == employee.positionName)
                 {
                     currentPosId = pos.ItemArray[0].ToString();
-                    return;
+                    break;
                 }
             }
         }

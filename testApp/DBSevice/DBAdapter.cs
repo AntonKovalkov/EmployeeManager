@@ -91,31 +91,25 @@ namespace testApp
 
         public void RemoveDataAt(int index)
         {
-            //connection.openConnection();
-            Console.WriteLine(dataSet.Tables[AdapterType.employees].Rows[index].ItemArray[0]);
-            dataSet.Tables[AdapterType.employees].Rows[index].Delete();
+            connection.openConnection();
+            string type = AdapterType.employees;
+            adapter = new SqlDataAdapter(SQLCommands.GetData.getEmployees, connection.getConnection());
+            dataSet.Tables[type].Rows[index].Delete();
             SqlCommandBuilder builder = new SqlCommandBuilder(adapter);
             builder.GetDeleteCommand();
-            var _ = AdapterHandler(adapter, AdapterType.employees, true);
+            var _ = AdapterHandler(adapter, type, true);
             connection.closeConnection();
         }
 
         public String GetInfoForDelete(int index)
         {
-            connection.openConnection();
-            string type = AdapterType.joinedEmployees;
-            adapter = new SqlDataAdapter(SQLCommands.GetData.getEmployees, connection.getConnection());
-            var _ = AdapterHandler(adapter, type);
             if (dataSet.Tables.Count > 0)
             {
-                DataTable table = dataSet.Tables[type];
+                DataTable table = dataSet.Tables[AdapterType.employees];
                 if (table.Rows.Count > index)
                 {
                     object[] items = table.Rows[index].ItemArray;
-                    if (type != AdapterType.joinedDepartments)
-                    {
-                        return $"{items[1]} {items[2]}";
-                    }
+                    return $"{items[1]} {items[2]}";
                 }
             }
             return "";

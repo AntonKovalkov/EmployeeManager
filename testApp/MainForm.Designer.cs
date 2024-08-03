@@ -140,7 +140,7 @@
             this.button1.TabIndex = 1;
             this.button1.Text = "Get Info";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.finde_employee_Click);
             // 
             // dataGridView1
             // 
@@ -179,7 +179,7 @@
             this.change_button.UseVisualStyleBackColor = true;
             this.change_button.Click += new System.EventHandler(this.change_button_Click);
             // 
-            // Form1
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -191,8 +191,9 @@
             this.Controls.Add(this.get_all_departaments);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.get_all);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "Employees";
+            this.Activated += new System.EventHandler(this.MainForm_Activated);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

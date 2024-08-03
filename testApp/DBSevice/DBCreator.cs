@@ -12,7 +12,6 @@ namespace testApp.DBSevice
 {
     internal class DBCreator
     {
-        private string connectioPath = "";
         private DBConnection dbConnection = new DBConnection();
         private SqlDataAdapter adapter = null;
 
@@ -42,12 +41,33 @@ namespace testApp.DBSevice
 
         private void CreateTables()
         {
-            string command = 
+            string command =
                 SQLCommands.CreateData.createDepartments +
                 SQLCommands.CreateData.createPositions +
                 SQLCommands.CreateData.createEmployees;
             
            
+            SqlCommand myCommand = new SqlCommand(command, dbConnection.getConnection());
+            try
+            {
+                dbConnection.openConnection();
+                myCommand.ExecuteNonQuery();
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "MyProgram", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            finally
+            {
+                CreateProcedure();
+            }
+        }
+
+        private void CreateProcedure()
+        {
+            string command = SQLCommands.CreateData.createProcedure;
+
+
             SqlCommand myCommand = new SqlCommand(command, dbConnection.getConnection());
             try
             {
