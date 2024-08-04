@@ -41,6 +41,7 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.delete_button = new System.Windows.Forms.Button();
             this.change_button = new System.Windows.Forms.Button();
+            this.createNewEmployeeButton = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -68,6 +69,7 @@
             // 
             // panel1
             // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.employee_id_text);
             this.panel1.Controls.Add(this.get_info);
@@ -106,6 +108,7 @@
             // 
             // panel2
             // 
+            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel2.Controls.Add(this.label2);
             this.panel2.Controls.Add(this.last_name_text);
             this.panel2.Controls.Add(this.button1);
@@ -179,12 +182,23 @@
             this.change_button.UseVisualStyleBackColor = true;
             this.change_button.Click += new System.EventHandler(this.change_button_Click);
             // 
+            // createNewEmployeeButton
+            // 
+            this.createNewEmployeeButton.Location = new System.Drawing.Point(330, 251);
+            this.createNewEmployeeButton.Name = "createNewEmployeeButton";
+            this.createNewEmployeeButton.Size = new System.Drawing.Size(111, 23);
+            this.createNewEmployeeButton.TabIndex = 8;
+            this.createNewEmployeeButton.Text = "Add new employee";
+            this.createNewEmployeeButton.UseVisualStyleBackColor = true;
+            this.createNewEmployeeButton.Click += new System.EventHandler(this.createNewEmployeeButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(615, 286);
+            this.Controls.Add(this.createNewEmployeeButton);
             this.Controls.Add(this.change_button);
             this.Controls.Add(this.delete_button);
             this.Controls.Add(this.dataGridView1);
@@ -220,6 +234,7 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button delete_button;
         private System.Windows.Forms.Button change_button;
+        private System.Windows.Forms.Button createNewEmployeeButton;
     }
 }
 

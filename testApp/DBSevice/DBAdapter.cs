@@ -7,6 +7,8 @@ using System.Data.SqlClient;
 using System.Data;
 using testApp.DBSevice;
 using System.Reflection;
+using System.Data.Common;
+using System.Windows.Forms;
 
 namespace testApp
 {
@@ -112,18 +114,23 @@ namespace testApp
         }
 
         //Get employee name and surname bedore remove
-        public String GetInfoForDelete(int index)
+        public String GetInfoForDelete(string id)
         {
+            string result = "";
             if (dataSet.Tables.Count > 0)
             {
                 DataTable table = dataSet.Tables[AdapterType.employees];
-                if (table.Rows.Count > index)
+                foreach(DataRow row in table.Rows)
                 {
-                    object[] items = table.Rows[index].ItemArray;
-                    return $"{items[1]} {items[2]}";
+                    object[] items = row.ItemArray;
+                    if (items[0].ToString() == id)
+                    {
+                        result = $"{items[1]} {items[2]}";
+                        return result;
+                    }
                 }
             }
-            return "";
+            return result;
         }
 
         //Stored departments table
@@ -139,14 +146,21 @@ namespace testApp
         }
 
         //Update employee data
-        public void UpdateEmployee(EmployeeEditModel model, string depId, string posId, int currentIndex) 
+        public void UpdateEmployee(EmployeeEditModel model, string depId, string posId, string id) 
         {
-            dataSet.Tables[AdapterType.employees].Rows[currentIndex]["first_name"] = model.name;
-            dataSet.Tables[AdapterType.employees].Rows[currentIndex]["last_name"] = model.lastName;
-            dataSet.Tables[AdapterType.employees].Rows[currentIndex]["email"] = model.email;
-            dataSet.Tables[AdapterType.employees].Rows[currentIndex]["birthday"] = model.birthday;
-            dataSet.Tables[AdapterType.employees].Rows[currentIndex]["department_id"] = depId;
-            dataSet.Tables[AdapterType.employees].Rows[currentIndex]["position_id"] = posId;
+            foreach (DataRow row in dataSet.Tables[AdapterType.employees].Rows)
+            {
+                if (row["id"].ToString() == id)
+                {
+                    row["first_name"] = model.name;
+                    row["last_name"] = model.lastName;
+                    row["email"] = model.email;
+                    row["birthday"] = model.birthday;
+                    row["department_id"] = depId;
+                    row["position_id"] = posId;
+                    break;
+                }
+            }
 
             connection.openConnection();
             adapter = new SqlDataAdapter(SQLCommands.GetData.getEmployees, connection.getConnection());
@@ -154,6 +168,29 @@ namespace testApp
             builder.GetUpdateCommand();
             var _ = AdapterHandler(adapter, AdapterType.employees, true);
             connection.closeConnection();
+        }
+
+        //Create new employee
+        public void CreateEmployee(EmployeeEditModel model, string depId, string posId)
+        {
+            string command = SQLCommands.CreateData.InsertEmployee(model.name, model.lastName, model.email, model.birthday, depId, posId); ;
+            SqlCommand myCommand = new SqlCommand(command, connection.getConnection());
+            try
+            {
+                connection.openConnection();
+                myCommand.ExecuteNonQuery();
+            }
+            catch (SqlException ex)
+            {
+                if (ex.Number == 2627)
+                {
+                    MessageBox.Show("Сотрудник с указанным email уже создан.", "MyProgram", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                } else
+                {
+                    MessageBox.Show(ex.ToString(), "MyProgram", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                
+            }
         }
 
         //Checking the SQladapter for exceptions
@@ -182,6 +219,21 @@ namespace testApp
                 Console.WriteLine(ex.Message);
                 return null;
             }
+        }
+
+        public void RemoveEmployee(string id)
+        {
+            string command = SQLCommands.GetData.RemoveEmployee(id);
+            SqlCommand myCommand = new SqlCommand(command, connection.getConnection());
+            try
+            {
+                connection.openConnection();
+                myCommand.ExecuteNonQuery();
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "MyProgram", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }            
         }
     }
 }

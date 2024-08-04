@@ -14,7 +14,8 @@ namespace testApp
     public partial class EditForm : Form
     {
         public DBAdapter adapter;
-        public int selectedItem;
+        public string selectedID;
+        public bool isNewAddition = false;
         private DataTable employeeTable;
         private DataTable departmentsTable;
         private DataTable positionsTable;
@@ -37,7 +38,14 @@ namespace testApp
                 Hide();
             } else
             {
-                adapter.UpdateEmployee(employee, currentDepId, currentPosId, selectedItem);
+                if (!isNewAddition)
+                {
+                    adapter.UpdateEmployee(employee, currentDepId, currentPosId, selectedID);
+                } else
+                {
+                    adapter.CreateEmployee(employee, currentDepId, currentPosId);
+                }
+                
                 Hide();
             }
         }
@@ -51,21 +59,24 @@ namespace testApp
 
         private void LoadTables()
         {
-            employeeTable = adapter.GetInfoFor(selectedItem);
+            employeeTable = adapter.GetInfoFor(selectedID);
             departmentsTable = adapter.GetDepartmentsTable();
             positionsTable = adapter.GetPositionsTable();
         }
 
         private void CreateModel()
         {
-            object[] items = employeeTable.Rows[0].ItemArray;
-            string name = items[1].ToString();
-            string lastName = items[2].ToString();
-            string email = items[3].ToString();
-            string birthday = items[4].ToString();
-            string department= items[5].ToString();
-            string position = items[6].ToString();
-            employee = new EmployeeEditModel(name, lastName, email, birthday, department, position);
+            if (!isNewAddition)
+            {
+                object[] items = employeeTable.Rows[0].ItemArray;
+                string name = items[1].ToString();
+                string lastName = items[2].ToString();
+                string email = items[3].ToString();
+                string birthday = items[4].ToString();
+                string department = items[5].ToString();
+                string position = items[6].ToString();
+                employee = new EmployeeEditModel(name, lastName, email, birthday, department, position);
+            }
         }
 
         private void ConfigViews()

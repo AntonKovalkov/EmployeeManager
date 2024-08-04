@@ -15,9 +15,9 @@ namespace testApp
     {
 
         private DBAdapter adapter = null;
-        private int? _selectedItem = null;
         private TableType? _tableType = null;
         private bool isFirstRun = true;
+        private string _selectedID = "";
 
         private TableType? TableType
         {
@@ -25,19 +25,19 @@ namespace testApp
             set
             {
                 _tableType = value;
-                bool condition = (value == testApp.TableType.employees) && (SelectedItem != null);
+                bool condition = (value == testApp.TableType.employees) && (SelectedID != "");
                 delete_button.Enabled = condition;
                 change_button.Enabled = condition;
             }
         }
 
-        private int? SelectedItem
+        private string SelectedID
         {
-            get => _selectedItem;
+            get => _selectedID;
             set
             {
-                _selectedItem = value;
-                bool condition = (TableType == testApp.TableType.employees) && (value != null);
+                _selectedID = value;
+                bool condition = (TableType == testApp.TableType.employees) && (value != "");
                 delete_button.Enabled = condition;
                 change_button.Enabled = condition;
             }
@@ -59,7 +59,7 @@ namespace testApp
         private void get_all_Click(object sender, EventArgs e)
         {
             LoadData();
-            SelectedItem = null;
+            SelectedID = "";
         }
 
         private void LoadData()
@@ -76,8 +76,8 @@ namespace testApp
             if (id == null || id == "") { return; }
             dataGridView1.DataSource = adapter.GetInfoFor(id);
             AdjustColumnOrder();
-            TableType = testApp.TableType.others;
-            SelectedItem = null;
+            TableType = testApp.TableType.employees;
+            SelectedID = "";
         }
 
         //Get all departaments
@@ -85,7 +85,7 @@ namespace testApp
         {
             dataGridView1.DataSource = adapter.GetDepartments();
             TableType = testApp.TableType.others;
-            SelectedItem = null;
+            SelectedID = "";
         }
 
         //Get employee from procedure
@@ -94,8 +94,8 @@ namespace testApp
             String last_name = last_name_text.Text;
             dataGridView1.DataSource = adapter.SearchBySurname(last_name);
             AdjustColumnOrder();
-            TableType = testApp.TableType.others;
-            SelectedItem = null;
+            TableType = testApp.TableType.employees;
+            SelectedID = "";
         }
 
         //DataGrid configuration
@@ -121,20 +121,20 @@ namespace testApp
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            SelectedItem = e.RowIndex;
+            SelectedID = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
         }
 
         private void delete_button_Click(object sender, EventArgs e)
         {
             Console.WriteLine("Delete!!");
-            if (SelectedItem.HasValue)
+            if (SelectedID != "")
             {
-                string employee = adapter.GetInfoForDelete(SelectedItem.Value);
+                string employee = adapter.GetInfoForDelete(SelectedID);
                 if (MessageBox.Show($"Вы уверены что хотите удалить сотрудника {employee}?", "Удаление", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    adapter.RemoveDataAt(SelectedItem.Value);
-                    dataGridView1.Rows.RemoveAt(SelectedItem.Value);
-                    SelectedItem = null;
+                    adapter.RemoveEmployee(SelectedID);
+                    dataGridView1.DataSource = adapter.GetAll();
+                    SelectedID = "";
                 }
             }
             
@@ -143,11 +143,11 @@ namespace testApp
         //Edit secletd employee
         private void change_button_Click(object sender, EventArgs e)
         {
-            if (SelectedItem.HasValue)
+            if (SelectedID != "")
             {
                 EditForm form = new EditForm();
                 form.adapter = adapter;
-                form.selectedItem = SelectedItem.Value;
+                form.selectedID = SelectedID;
                 form.ShowDialog();
             }
         }
@@ -162,6 +162,14 @@ namespace testApp
             {
                 LoadData();
             }
+        }
+
+        private void createNewEmployeeButton_Click(object sender, EventArgs e)
+        {
+            EditForm form = new EditForm();
+            form.adapter = adapter;
+            form.isNewAddition = true;
+            form.Show();
         }
     }
 
